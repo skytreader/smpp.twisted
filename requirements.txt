@@ -2,3 +2,4 @@ twisted
 enum
 pyOpenSSL
 smpp.pdu
+mock
