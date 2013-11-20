@@ -22,6 +22,8 @@ from smpp.pdu.pdu_types import *
 
 LOG_CATEGORY="smpp.twisted.tests.smsc_simulator"
 
+log_formatter = logging.Formatter("[%(levelname)s] %(asctime)s - %(filename)s.%(module)s:%l(lineno)d - %(message)s")
+
 class BlackHoleSMSC( protocol.Protocol ):
 
     responseMap = {}
@@ -44,12 +46,13 @@ class BlackHoleSMSC( protocol.Protocol ):
             self.rawMessageReceived( message )
 
     def rawMessageReceived( self, message ):
-        pdu = self.PDUReceived(self.encoder.decode(String.StringIO(message)))
+        pdu = self.PDUReceived(self.encoder.decode(StringIO.StringIO(message)))
         self.log.info("PDU received: " + str(pdu))
-        return self.PDUReceived( self.encoder.decode( StringIO.StringIO(message) ) )
+        return pdu
 
     def PDUReceived( self, pdu ):
         if pdu.__class__ in self.responseMap:
+            self.log.info("Can respond to PDU")
             self.responseMap[pdu.__class__](pdu)
             
     def sendSuccessResponse(self, reqPDU):

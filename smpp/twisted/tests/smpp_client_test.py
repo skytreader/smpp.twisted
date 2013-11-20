@@ -608,7 +608,7 @@ class SMPPClientServiceBindTimeoutTestCase(SimulatorTestCase):
 if __name__ == '__main__':
     observer = log.PythonLoggingObserver()
     observer.start()
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG, format="[%(levelname)s] %(asctime)s - %(filename)s.%(module)s : %(lineno)d - %(message)s")
     
     import sys
     from twisted.scripts import trial
