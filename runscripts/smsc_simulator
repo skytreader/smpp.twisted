@@ -1,0 +1,2 @@
+cd ..
+python -m smpp.twisted.tests.smsc_simulator
