@@ -504,3 +504,6 @@ class SMPPServerTimeoutTestCase(SMPPServerBaseTest):
         self.clock.advance(0.1)
         self.clock.advance(0.1)
         self.assertEqual(self.proto.sessionState, SMPPSessionStates.UNBIND_PENDING)
+
+if __name__ == "__main__":
+    unittest.main()
