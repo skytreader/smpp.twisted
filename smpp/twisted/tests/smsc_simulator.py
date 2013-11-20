@@ -22,7 +22,7 @@ from smpp.pdu.pdu_types import *
 
 LOG_CATEGORY="smpp.twisted.tests.smsc_simulator"
 
-log_formatter = logging.Formatter("[%(levelname)s] %(asctime)s - %(filename)s.%(module)s:%l(lineno)d - %(message)s")
+log_formatter = "[%(levelname)s] %(asctime)s - %(pathname)s.%(module)s:%(lineno)d - %(message)s"
 
 class BlackHoleSMSC( protocol.Protocol ):
 
@@ -315,7 +315,7 @@ class DeliverSMAndUnbindSMSC(DeliverSMSMSC):
         self.sendPDU(Unbind())
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG, format=log_formatter)
     factory          = Factory()
     factory.protocol = BlackHoleSMSC
     reactor.listenTCP(8007, factory) 

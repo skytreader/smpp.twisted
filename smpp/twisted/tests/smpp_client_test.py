@@ -20,7 +20,7 @@ from twisted.internet import error, reactor, defer
 from twisted.internet.protocol import Factory 
 from twisted.python import log
 import mock
-from smpp.twisted.protocol import SMPPClientProtocol
+#from smpp.twisted.protocol import SMPPClientProtocol
 from smpp.twisted.client import SMPPClientTransmitter, SMPPClientReceiver, SMPPClientTransceiver, DataHandlerResponse, SMPPClientService
 from smpp.twisted.tests.smsc_simulator import *
 from smpp.pdu.error import *
@@ -608,9 +608,10 @@ class SMPPClientServiceBindTimeoutTestCase(SimulatorTestCase):
 if __name__ == '__main__':
     observer = log.PythonLoggingObserver()
     observer.start()
-    logging.basicConfig(level=logging.DEBUG, format="[%(levelname)s] %(asctime)s - %(filename)s.%(module)s : %(lineno)d - %(message)s")
+    logging.basicConfig(level=logging.DEBUG, format="[%(levelname)s] %(asctime)s - %(pathname)s.%(module)s : %(lineno)d - %(message)s")
     
     import sys
     from twisted.scripts import trial
-    sys.argv.extend([sys.argv[0]])
+    sys.argv.extend(["--help"])
+    logging.info(str(sys.argv))
     trial.run()
