@@ -25,6 +25,10 @@ LOG_CATEGORY="smpp.twisted.tests.smsc_simulator"
 log_formatter = "[%(levelname)s] %(asctime)s - %(pathname)s.%(module)s:%(lineno)d - %(message)s"
 
 class BlackHoleSMSC( protocol.Protocol ):
+    """
+    The bare bones of an SMSC implementation. Nothing happens to the transactions
+    that go here (and so, "blackhole")
+    """
 
     responseMap = {}
 
@@ -54,7 +58,8 @@ class BlackHoleSMSC( protocol.Protocol ):
         Called when a PDU is received from ESME.
         """
         if pdu.__class__ in self.responseMap:
-            self.log.info("Can respond to PDU: " + str(pdu))
+            self.log.info("RECV: " + str(pdu))
+            self.log.debug("Transaction class: " + str(pdu.__class__))
             # We have a map of functions specifying what to do to specific PDU types
             self.responseMap[pdu.__class__](pdu)
             
@@ -72,9 +77,9 @@ class BlackHoleSMSC( protocol.Protocol ):
         if isinstance(pdu, PDURequest) and pdu.seqNum is None:
             self.lastSeqNum += 1
             pdu.seqNum = self.lastSeqNum
-        self.log.debug("Sending PDU: %s" % pdu)
+        self.log.info("SEND: %s" % pdu)
         encoded = self.encoder.encode(pdu)
-        self.log.debug("Sending data [%s]" % binascii.b2a_hex(encoded))
+        self.log.info("Hex Dump [%s]" % binascii.b2a_hex(encoded))
         self.transport.write( encoded )
         
 class HappySMSC(BlackHoleSMSC):
