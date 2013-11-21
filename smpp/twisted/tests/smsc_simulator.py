@@ -47,12 +47,15 @@ class BlackHoleSMSC( protocol.Protocol ):
 
     def rawMessageReceived( self, message ):
         pdu = self.PDUReceived(self.encoder.decode(StringIO.StringIO(message)))
-        self.log.info("PDU received: " + str(pdu))
         return pdu
 
     def PDUReceived( self, pdu ):
+        """
+        Called when a PDU is received from ESME.
+        """
         if pdu.__class__ in self.responseMap:
-            self.log.info("Can respond to PDU")
+            self.log.info("Can respond to PDU: " + str(pdu))
+            # We have a map of functions specifying what to do to specific PDU types
             self.responseMap[pdu.__class__](pdu)
             
     def sendSuccessResponse(self, reqPDU):
@@ -63,12 +66,15 @@ class BlackHoleSMSC( protocol.Protocol ):
         self.sendPDU(respPDU)
 
     def sendPDU(self, pdu):
+        """
+        Call this when you want to send a PDU to and ESME.
+        """
         if isinstance(pdu, PDURequest) and pdu.seqNum is None:
             self.lastSeqNum += 1
             pdu.seqNum = self.lastSeqNum
-        # self.log.debug("Sending PDU: %s" % pdu)
+        self.log.debug("Sending PDU: %s" % pdu)
         encoded = self.encoder.encode(pdu)
-        # self.log.debug("Sending data [%s]" % binascii.b2a_hex(encoded))
+        self.log.debug("Sending data [%s]" % binascii.b2a_hex(encoded))
         self.transport.write( encoded )
         
 class HappySMSC(BlackHoleSMSC):
@@ -299,6 +305,7 @@ class DeliverSMSMSC(HappySMSC):
         self.responseMap[BindTransceiver] = self.sendDeliverSM
         
     def sendDeliverSM(self, reqPDU):
+        self.log.info("Sending response for " + str(reqPDU))
         self.sendSuccessResponse(reqPDU)
         
         pdu = DeliverSM(
@@ -317,6 +324,6 @@ class DeliverSMAndUnbindSMSC(DeliverSMSMSC):
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG, format=log_formatter)
     factory          = Factory()
-    factory.protocol = BlackHoleSMSC
+    factory.protocol = HappySMSC
     reactor.listenTCP(8007, factory) 
     reactor.run()
